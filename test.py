@@ -36,7 +36,12 @@ if __name__ == '__main__':
             gt = model.label.cpu().int().numpy()
             _, pred = torch.max(model.output.data.cpu(), 1)
             pred = pred.float().detach().int().numpy()
-            save_images(save_dir, model.get_current_visuals(), model.get_image_names(), model.get_image_oriSize(), opt.prob_map)
+
+            ####
+            rgb_im_path = "/home/mostafathereal/Desktop/SNE-RoadSeg/datasets/kitti/testing/image_2/" + data['path'][0]
+            ####
+
+            save_images(save_dir, model.get_current_visuals(), model.get_image_names(), model.get_image_oriSize(), opt.prob_map, rgb_im_path)
 
             # Resize images to the original size for evaluation
             image_size = model.get_image_oriSize()

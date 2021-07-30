@@ -6,12 +6,18 @@ import os
 import cv2
 
 
-def save_images(save_dir, visuals, image_name, image_size, prob_map):
+def save_images(save_dir, visuals, image_name, image_size, prob_map, rgb_im_path):
     """save images to disk"""
     image_name = image_name[0]
     oriSize = (image_size[0].item(), image_size[1].item())
     palet_file = 'datasets/palette.txt'
     impalette = list(np.genfromtxt(palet_file, dtype=np.uint8).reshape(3*256))
+
+    #
+    prob_map = False
+    rgb_im = cv2.imread(rgb_im_path)
+    # ic(rgb_im.shape)
+    #
 
     for label, im_data in visuals.items():
         if label == 'output':
