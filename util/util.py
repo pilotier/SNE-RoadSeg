@@ -4,15 +4,16 @@ import numpy as np
 from PIL import Image
 import os
 import cv2
+from icecream import ic
 
 
 def save_images(save_dir, visuals, image_name, image_size, prob_map, rgb_im_path):
+
     """save images to disk"""
     image_name = image_name[0]
     oriSize = (image_size[0].item(), image_size[1].item())
     palet_file = 'datasets/palette.txt'
     impalette = list(np.genfromtxt(palet_file, dtype=np.uint8).reshape(3*256))
-
     #
     prob_map = False
     rgb_im = cv2.imread(rgb_im_path)
@@ -21,13 +22,20 @@ def save_images(save_dir, visuals, image_name, image_size, prob_map, rgb_im_path
 
     for label, im_data in visuals.items():
         if label == 'output':
+            ic(im_data.shape)
+            ic(rgb_im.shape)
             if prob_map:
                 im = tensor2confidencemap(im_data)
                 im = cv2.resize(im, oriSize)
+                cv2.imshow("SNE road seg", im)
+                cv2.waitKey(15)
                 cv2.imwrite(os.path.join(save_dir, image_name[:-10]+'road_'+image_name[-10:]), im)
             else:
                 im = tensor2labelim(im_data, impalette)
                 im = cv2.resize(im, oriSize)
+                added_image = cv2.addWeighted(rgb_im,0.4,im,0.5,0)
+                cv2.imshow("SNE road seg", added_image)
+                cv2.waitKey(1)
                 cv2.imwrite(os.path.join(save_dir, image_name), cv2.cvtColor(im, cv2.COLOR_RGB2BGR))
 
 def tensor2im(input_image, imtype=np.uint8):

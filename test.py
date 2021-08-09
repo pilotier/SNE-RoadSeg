@@ -6,6 +6,7 @@ from util.util import confusion_matrix, getScores, save_images
 import torch
 import numpy as np
 import cv2
+from icecream import ic
 
 if __name__ == '__main__':
     opt = TestOptions().parse()
@@ -27,6 +28,7 @@ if __name__ == '__main__':
     test_loss_iter = []
     epoch_iter = 0
     conf_mat = np.zeros((dataset.dataset.num_labels, dataset.dataset.num_labels), dtype=np.float)
+    ic(opt)
     with torch.no_grad():
         for i, data in enumerate(dataset):
             model.set_input(data)
@@ -36,13 +38,9 @@ if __name__ == '__main__':
             gt = model.label.cpu().int().numpy()
             _, pred = torch.max(model.output.data.cpu(), 1)
             pred = pred.float().detach().int().numpy()
-
-            ####
             rgb_im_path = "/home/mostafathereal/Desktop/SNE-RoadSeg/datasets/kitti/testing/image_2/" + data['path'][0]
-            ####
-
             save_images(save_dir, model.get_current_visuals(), model.get_image_names(), model.get_image_oriSize(), opt.prob_map, rgb_im_path)
-
+            
             # Resize images to the original size for evaluation
             image_size = model.get_image_oriSize()
             oriSize = (image_size[0].item(), image_size[1].item())
